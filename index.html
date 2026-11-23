@@ -101,6 +101,15 @@ a.card:hover{transform:translateY(-3px)}
 .jhead figcaption{margin-top:8px;color:var(--mute);font-size:14px;font-weight:600;text-align:center}
 .jhead p{margin:8px 0 0;color:var(--mute);font-size:17px}
 @media(max-width:600px){.jhead{grid-template-columns:minmax(0,1fr)}.jhead figure{max-width:280px}}
+:root[data-look=light]{color-scheme:light}
+:root[data-look=light] nav{background:#fff;color:#10275f;box-shadow:0 1px 0 #e3e8f0,0 4px 16px rgba(16,39,95,.06)}
+:root[data-look=light] .brand,:root[data-look=light] .tabs a{color:#10275f}
+:root[data-look=light] .hero{background:repeating-linear-gradient(90deg,#ffffff 0 90px,#f3f6fb 90px 180px);color:#10275f}
+:root[data-look=light] .chalk g{stroke:var(--pitch)}:root[data-look=light] .chalk{opacity:.18}
+:root[data-look=light] .num{text-shadow:none}
+:root[data-look=light] .jersey svg{filter:drop-shadow(0 16px 22px rgba(16,39,95,.22))}
+:root[data-look=light] .stats{background:var(--pitch);color:#fff}:root[data-look=light] .stat b{color:#fff}
+:root[data-look=light] .hero .ghost{color:var(--pitch)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .chip{font:600 15px Barlow,sans-serif;min-height:40px;padding:0 14px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .chip[aria-pressed=true]{background:var(--pitch);color:#fff;border-color:var(--pitch)}
@@ -190,7 +199,7 @@ dialog p{padding:12px 16px;margin:0}
    </div>
    <div class="jersey">
     <svg viewBox="0 0 400 420" aria-hidden="true">
-     <path d="M130 20 L60 50 L0 130 L60 175 L85 150 L85 410 L315 410 L315 150 L340 175 L400 130 L340 50 L270 20 Q200 70 130 20Z" style="fill:var(--kit)"/>
+     <path d="M130 20 L60 50 L0 130 L60 175 L85 150 L85 410 L315 410 L315 150 L340 175 L400 130 L340 50 L270 20 Q200 70 130 20Z" style="fill:var(--jersey,var(--kit))"/>
      <path d="M130 20 Q200 70 270 20 L255 14 Q200 52 145 14Z" fill="#fff"/>
      <path d="M85 150 L85 410 L110 410 L110 160Z M315 150 L315 410 L290 410 L290 160Z" fill="#000" opacity=".12"/>
      <path d="M0 130 L60 175 L68 166 L10 122Z M400 130 L340 175 L332 166 L390 122Z" fill="#fff"/></svg>
@@ -308,7 +317,7 @@ let f={photo:'all',video:'all',post:'all',match:'all'};
 
 function applyTheme(t){t=typeof t==='object'&&t?t:THEMES[t]||THEMES.midnight;const s=document.documentElement.style;
  s.setProperty('--pitch',t.p);s.setProperty('--pitch2',t.p2);s.setProperty('--kit',t.k);s.setProperty('--kitText',t.kt);s.setProperty('--kitDark',t.kd||t.k);
- if(t.a)s.setProperty('--grn',`light-dark(${t.a[0]},${t.a[1]})`);if(t.ki)s.setProperty('--kitInk',`light-dark(${t.ki[0]},${t.ki[1]})`)}
+ s.setProperty('--jersey',t.j||t.k);if(t.light)document.documentElement.dataset.look='light';else delete document.documentElement.dataset.look;if(t.a)s.setProperty('--grn',`light-dark(${t.a[0]},${t.a[1]})`);if(t.ki)s.setProperty('--kitInk',`light-dark(${t.ki[0]},${t.ki[1]})`)}
 
 function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'home';
  $$('[data-view]').forEach(s=>s.classList.toggle('on',s.dataset.view===v));

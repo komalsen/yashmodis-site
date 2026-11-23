@@ -10,7 +10,24 @@
   "intro": "",
   "about": "Yash Modi has loved soccer since he was a toddler. He was always curious and always outside, especially when there was a ball nearby, and he started playing at the age of three. Summer camps came next, and year after year he has grown into a confident, hard-working player.\n\nToday Yash wears jersey #38 for Peninsula Arsenal White in the U10 group, playing in the 2026-27 NorCal Premier Fall season. He plays as a striker and on both wings, as a right and left midfielder.\n\nOff the soccer field, Yash is an all-round athlete. He loves skiing, swimming, ice-skating, volleyball, cricket and badminton. But soccer will always be his first love.",
   "photo": "photos/profile/main.jpg",
-  "theme": "midnight",
+  "theme": {
+    "name": "White A",
+    "light": true,
+    "p": "#1d4fd6",
+    "p2": "#173fb0",
+    "k": "#e3262f",
+    "kt": "#ffffff",
+    "kd": "#e3262f",
+    "j": "#1d4fd6",
+    "a": [
+      "#1d4fd6",
+      "#8fb0ff"
+    ],
+    "ki": [
+      "#c41d26",
+      "#ff6b72"
+    ]
+  },
   "previousStats": {
     "goals": 0,
     "assists": 0,
