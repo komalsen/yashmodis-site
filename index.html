@@ -49,7 +49,7 @@ nav .top{padding:10px max(5vw,16px) 0}
 .jersey{position:relative;aspect-ratio:1/1.05;max-width:440px;width:100%;justify-self:center}
 .jersey svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 18px 24px rgba(0,0,0,.35))}
 .photo{position:absolute;left:24%;right:24%;top:22%;bottom:14%;border-radius:18px;overflow:hidden;border:4px solid #fff;background:var(--pitch2)}
-.photo img,.portrait img{width:100%;height:100%;object-fit:cover;display:block}
+.photo img,.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
 .ph{display:grid;place-items:center;height:100%;font-family:Anton,sans-serif;font-size:clamp(60px,10vw,120px);color:#fff}
 .stats{background:var(--ink);color:var(--bg)}
 .stats .wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:22px max(5vw,16px)}
@@ -283,7 +283,7 @@ const THEMES={
  sky:{p:'#3d8fd1',p2:'#337fbd',k:'#0e2a5c',kt:'#ffffff',kd:'#8cc8f5',a:['#1f5f99','#8cc8f5'],ki:['#0e2a5c','#8cc8f5']},
  purple:{p:'#3b1f6b',p2:'#2f185a',k:'#d4d8e0',kt:'#1b1030',kd:'#d4d8e0',a:['#5b2fa8','#c3a6ff'],ki:['#5b2fa8','#c3a6ff']},
  classic:{p:'#0f6b3a',p2:'#0b5a30',k:'#ff6a1a',kt:'#1a0a00',kd:'#ff6a1a',a:['#0f6b3a','#5fd193'],ki:['#c94a06','#ff8a45']}};
-let P={},matches=[],tours=[],photos=[],videos=[],posts=[],awards=[],albumInfo=[];let album=null,lbList=[],lbI=0;
+let P={},matches=[],tours=[],photos=[],videos=[],posts=[],awards=[],albumInfo=[],photosRaw=[];let album=null,lbList=[],lbI=0;
 let f={photo:'all',video:'all',post:'all',match:'all'};
 
 function applyTheme(t){t=typeof t==='object'&&t?t:THEMES[t]||THEMES.midnight;const s=document.documentElement.style;
@@ -314,8 +314,8 @@ function renderProfile(){
   .filter(x=>x[1]).map(x=>`<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td></tr>`).join('');
  $('#foot').textContent=P.footer||'Made with love by his #1 fan — Mom ⚽';
  const ps=safe(P.photo);
- $$('[data-photo]').forEach(box=>{box.querySelector('img')?.remove();const ph=box.querySelector('.ph');
-  if(ps){const i=document.createElement('img');i.alt=name;i.src=ps;box.prepend(i);ph.style.display='none'}else ph.style.display=''});
+ $$('[data-photo]').forEach(box=>{box.querySelector('img')?.remove();const ph=box.querySelector('.ph');const src=box.classList.contains('portrait')&&safe(P.aboutPhoto)||ps;
+  if(src){const i=document.createElement('img');i.alt=name;i.src=src;box.prepend(i);ph.style.display='none'}else ph.style.display=''});
  const live=safe(P.liveStream?.url);$('#live').hidden=!live;if(live){$('#liveBtn').href=live;$('#liveTxt').textContent=P.liveStream.note||`Watch ${first}'s game live.`}
  const L=P.links||{},yt=safe(L.youtube),ig=L.instagram?(safe(L.instagram)||'https://instagram.com/'+L.instagram.replace(/^@/,'')):'';
  $('#footLinks').innerHTML=[[yt,'YouTube'],[ig,'Instagram']].filter(l=>l[0]).map(l=>`<a href="${esc(l[0])}" target="_blank" rel="noopener">${l[1]}</a>`).join('');
@@ -341,7 +341,7 @@ function renderMedia(){
   $('#gallery').innerHTML=`<div class="albumHead"><div><h3>${esc(a.name)}</h3><p>${esc([fmt(a.date),plural(a.ps.length,'photo'),a.desc].filter(Boolean).join(' · '))}</p></div><button class="chip" type="button" data-album="">← All albums</button></div><div class="grid">${a.ps.map(p=>tile(p,a.ps)).join('')}</div>`}
  else{$('#galTitle').textContent='Photo albums';
   $('#gallery').innerHTML=`<div class="albums">${albums.map(a=>`<button class="album" type="button" data-album="${esc(a.name)}"><div class="cov">${a.cover?`<img src="${esc(safe(a.cover.src))}" alt="" loading="lazy">`:`<div class="ph">⚽</div>`}<span class="cnt">${plural(a.ps.length,'photo')}</span></div><div class="info"><b>${esc(a.name)}</b><span class="meta">${esc(fmt(a.date))}</span></div></button>`).join('')}</div>`}
- const best=photos.filter(p=>p.featured).slice(0,9);
+ const best=photosRaw.filter(p=>p.featured).slice(0,9);
  $('#bestBand').hidden=!best.length;
  $('#best').innerHTML=best.map((p,i)=>`<button class="open" type="button" data-open="${i}" data-list="best" aria-label="Open photo"><img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}" loading="lazy"></button>`).join('');
  renderMedia.lists={all:photos,best,album:album?albums.find(x=>x.name===album).ps:[]};
@@ -404,7 +404,7 @@ const load=n=>fetch('data/'+n+'.json',{cache:'no-cache'}).then(r=>r.ok?r.json():
 route();renderAll();
 /*load*/Promise.all(['profile','matches','tournaments','photos','videos','journal','awards','albums'].map(load)).then(([pr,ma,to,ph,vi,jo,aw,al])=>{
  albumInfo=al||[];
- P=pr||{};matches=(ma||[]).sort(byDate);tours=(to||[]).sort(byDate);photos=(ph||[]).sort(byDate);videos=(vi||[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(a.time||'').localeCompare(b.time||''));posts=(jo||[]).sort(byDate);awards=(aw||[]).sort(byDate);
+ P=pr||{};matches=(ma||[]).sort(byDate);tours=(to||[]).sort(byDate);photosRaw=ph||[];photos=[...photosRaw].sort(byDate);videos=(vi||[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(a.time||'').localeCompare(b.time||''));posts=(jo||[]).sort(byDate);awards=(aw||[]).sort(byDate);
  renderAll()});
 }
 </script>

@@ -9,7 +9,7 @@
   "favoritePlayer": "",
   "intro": "",
   "about": "",
-  "photo": "",
+  "photo": "photos/profile/main.jpg",
   "theme": "midnight",
   "previousStats": {
     "goals": 0,
@@ -25,5 +25,6 @@
     "youtube": "",
     "instagram": ""
   },
-  "footer": "Made with love by his #1 fan — Mom ⚽"
+  "footer": "Made with love by his #1 fan — Mom ⚽",
+  "aboutPhoto": "photos/profile/about.jpg"
 }
