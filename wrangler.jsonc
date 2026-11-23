@@ -1,0 +1,10 @@
+// Cloudflare Workers settings for yashmodis.com
+// The whole folder is the website; files listed in .assetsignore are kept private.
+{
+  "name": "yashmodis-site",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./",
+    "not_found_handling": "single-page-application"
+  }
+}
