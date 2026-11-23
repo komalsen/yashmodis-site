@@ -139,6 +139,7 @@ dialog::backdrop{background:rgba(0,0,0,.8)}
 dialog .in{position:relative}dialog img{display:block;max-width:100%;max-height:82vh;margin:0 auto}
 dialog .x{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;border:0}
 dialog p{padding:12px 16px;margin:0}
+[hidden]{display:none!important}
 [data-view]{display:none}[data-view].on{display:block}
 .scroll{overflow-x:auto}
 @media(max-width:760px){.hero .wrap,.about{grid-template-columns:minmax(0,1fr)}.jersey{max-width:300px;order:-1}.post{grid-template-columns:minmax(0,1fr)}.portrait{max-width:360px}.trophies{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -350,7 +351,7 @@ function renderMedia(){
  $('#vids').innerHTML=sv.length?sv.map(v=>{const id=ytId(v.youtube),file=safe(v.file);
   const media=id?`<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="${esc(v.title||'Video')}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`
    :file?`<video src="${esc(file)}"${safe(v.poster)?` poster="${esc(v.poster)}"`:''} controls preload="none" playsinline></video>`:'';
-  return `<div class="tile"><div class="frame">${media}</div><div class="cap"><b>${esc(v.title||'')}</b><small>${esc([fmt(v.date),v.playlist].filter(Boolean).join(' · '))}</small></div></div>`}).join('')
+  return `<div class="tile"><div class="frame">${media}</div><div class="cap"><b>${esc(v.title||'')}</b><small>${esc(v.playlist&&v.playlist.includes(fmt(v.date).split(',')[0])?v.playlist:[fmt(v.date),v.playlist].filter(Boolean).join(' · '))}</small></div></div>`}).join('')
   :`<div class="empty" style="grid-column:1/-1">Videos coming soon.</div>`;
 }
 function matchRows(list){return `<div class="scroll"><table class="stack"><thead><tr><th>Date</th><th>Match</th><th class="r">Score</th><th class="r">Goals</th><th class="r">Assists</th><th>Notes</th></tr></thead><tbody>${list.map(m=>{const r=result(m);
