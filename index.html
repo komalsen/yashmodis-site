@@ -273,7 +273,7 @@ const safe=u=>/^https?:\/\//i.test(u||'')||/^(photos|videos)\//.test(u||'')?u:''
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmt=d=>{if(!d)return'';const [y,m,da]=d.split('-');return `${MON[+m-1]||''} ${+da||''}, ${y}`};
 const plural=(n,w)=>`${n} ${w}${n==1?'':'s'}`;
-const byDate=(a,b)=>(b.date||'').localeCompare(a.date||'');
+const byDate=(a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||''));
 const VIEWS=['home','about','journal','portfolio','videos','matches','achievements','contact'];
 const THEMES={
  midnight:{p:'#14244d',p2:'#0e1b3c',k:'#f5b301',kt:'#1a1200',kd:'#f5b301',a:['#1d3a80','#8fb0ff'],ki:['#946800','#ffc933']},
@@ -349,7 +349,7 @@ function renderMedia(){
  const sv=videos.filter(v=>f.video==='all'||v.playlist===f.video);
  $('#vids').innerHTML=sv.length?sv.map(v=>{const id=ytId(v.youtube),file=safe(v.file);
   const media=id?`<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="${esc(v.title||'Video')}" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`
-   :file?`<video src="${esc(file)}" controls preload="metadata" playsinline></video>`:'';
+   :file?`<video src="${esc(file)}"${safe(v.poster)?` poster="${esc(v.poster)}"`:''} controls preload="none" playsinline></video>`:'';
   return `<div class="tile"><div class="frame">${media}</div><div class="cap"><b>${esc(v.title||'')}</b><small>${esc([fmt(v.date),v.playlist].filter(Boolean).join(' · '))}</small></div></div>`}).join('')
   :`<div class="empty" style="grid-column:1/-1">Videos coming soon.</div>`;
 }
@@ -401,9 +401,9 @@ $('#lb').addEventListener('click',e=>{if(e.target.id==='lb')$('#lb').close()});
 
 const load=n=>fetch('data/'+n+'.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
 route();renderAll();
-Promise.all(['profile','matches','tournaments','photos','videos','journal','awards','albums'].map(load)).then(([pr,ma,to,ph,vi,jo,aw,al])=>{
+/*load*/Promise.all(['profile','matches','tournaments','photos','videos','journal','awards','albums'].map(load)).then(([pr,ma,to,ph,vi,jo,aw,al])=>{
  albumInfo=al||[];
- P=pr||{};matches=(ma||[]).sort(byDate);tours=(to||[]).sort(byDate);photos=(ph||[]).sort(byDate);videos=(vi||[]).sort(byDate);posts=(jo||[]).sort(byDate);awards=(aw||[]).sort(byDate);
+ P=pr||{};matches=(ma||[]).sort(byDate);tours=(to||[]).sort(byDate);photos=(ph||[]).sort(byDate);videos=(vi||[]).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(a.time||'').localeCompare(b.time||''));posts=(jo||[]).sort(byDate);awards=(aw||[]).sort(byDate);
  renderAll()});
 }
 </script>
