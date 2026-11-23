@@ -5,7 +5,7 @@
   "team": "Peninsula Arsenal White",
   "ageGroup": "U10",
   "strongFoot": "",
-  "playingSince": "",
+  "playingSince": "Age 3",
   "favoritePlayer": "",
   "intro": "",
   "about": "",
@@ -35,5 +35,6 @@
     "caption": "One team, all smiles."
   },
   "journalPhoto": "photos/journal/mom-and-yash.jpg",
-  "journalCaption": "Yash and his #1 fan"
+  "journalCaption": "Yash and his #1 fan",
+  "otherSports": "Skiing, swimming, ice-skating, volleyball, cricket, badminton"
 }

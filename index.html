@@ -330,7 +330,7 @@ function renderProfile(){
  $$('[data-tagline]').forEach(e=>e.textContent=tag);
  $('#heroBio').textContent=P.intro||`Full matches, highlights and pictures of ${first} — all in one place.`;
  $('#aboutTxt').textContent=P.about||`${name} wears #${num} and loves the game. More about ${first} coming soon.`;
- $('#facts').innerHTML=[['Number','#'+num],['Position',P.position],['Team',P.team],['Age group',P.ageGroup],['Strong foot',P.strongFoot],['Playing since',P.playingSince],['Favorite player',P.favoritePlayer]]
+ $('#facts').innerHTML=[['Number','#'+num],['Position',P.position],['Team',P.team],['Age group',P.ageGroup],['Strong foot',P.strongFoot],['Playing since',P.playingSince],['Favorite player',P.favoritePlayer],['Other sports',P.otherSports]]
   .filter(x=>x[1]).map(x=>`<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td></tr>`).join('');
  $('#foot').textContent=P.footer||'Made with love by his #1 fan — Mom ⚽';
  const ps=safe(P.photo);
