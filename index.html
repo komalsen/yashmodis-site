@@ -95,6 +95,12 @@ a.card:hover{transform:translateY(-3px)}
 .team .rec{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
 .team .rec b{font-family:Anton,sans-serif;font-weight:400;font-size:28px;display:block;line-height:1.1}
 @media(max-width:760px){.team{grid-template-columns:minmax(0,1fr)}}
+.jhead{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:28px;align-items:center;margin-bottom:28px}
+.jhead:has(figure[hidden]){grid-template-columns:minmax(0,1fr)}
+.jhead figure{margin:0}.jhead img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%;border-radius:20px;display:block}
+.jhead figcaption{margin-top:8px;color:var(--mute);font-size:14px;font-weight:600;text-align:center}
+.jhead p{margin:8px 0 0;color:var(--mute);font-size:17px}
+@media(max-width:600px){.jhead{grid-template-columns:minmax(0,1fr)}.jhead figure{max-width:280px}}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .chip{font:600 15px Barlow,sans-serif;min-height:40px;padding:0 14px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .chip[aria-pressed=true]{background:var(--pitch);color:#fff;border-color:var(--pitch)}
@@ -231,7 +237,8 @@ dialog p{padding:12px 16px;margin:0}
 </div></section>
 
 <section data-view="journal" class="band"><div class="wrap">
- <div class="head"><div><h2>Mom's Journal</h2><p>A soccer mom's notes on Yash's games, travel and the lessons along the way.</p></div></div>
+ <div class="jhead"><figure id="jFig" hidden><img id="jImg" alt="Yash with his mom"><figcaption id="jCap"></figcaption></figure>
+ <div><h2>Mom's Journal</h2><p>A soccer mom's notes on Yash's games, travel and the lessons along the way.</p></div></div>
  <div class="filters" id="pFilters"></div><div class="posts" id="posts"></div>
 </div></section>
 
@@ -396,7 +403,8 @@ function renderPosts(){
  $('#posts').innerHTML=sp.length?sp.map(postHTML).join(''):empty;
  $('#homePosts').innerHTML=posts.length?posts.slice(0,2).map(postHTML).join(''):empty;
 }
-function renderTeam(){const T=P.teamSection;$('#teamBand').hidden=!(T&&safe(T.photo));if(!T)return;
+function renderJournalHead(){const j=safe(P.journalPhoto);$('#jFig').hidden=!j;if(j&&$('#jImg').getAttribute('src')!==j)$('#jImg').src=j;$('#jCap').textContent=P.journalCaption||''}
+function renderTeam(){renderJournalHead();const T=P.teamSection;$('#teamBand').hidden=!(T&&safe(T.photo));if(!T)return;
  const t=totals();$('#teamLine').textContent=[[P.team,P.ageGroup].filter(Boolean).join(' · '),T.season].filter(Boolean).join(' · ');
  if($('#teamImg').getAttribute('src')!==T.photo)$('#teamImg').src=safe(T.photo);
  const v=$('#teamVid');if(safe(T.video)){v.hidden=false;if(v.getAttribute('src')!==T.video){v.src=T.video;if(safe(T.poster))v.poster=T.poster}}else v.hidden=true;
