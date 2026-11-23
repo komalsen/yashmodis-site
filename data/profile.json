@@ -26,5 +26,12 @@
     "instagram": ""
   },
   "footer": "Made with love by his #1 fan — Mom ⚽",
-  "aboutPhoto": "photos/profile/about.jpg"
+  "aboutPhoto": "photos/profile/about.jpg",
+  "teamSection": {
+    "photo": "photos/team/2026-27-team.jpg",
+    "video": "videos/team/2026-27-team.mp4",
+    "poster": "videos/team/2026-27-team.jpg",
+    "season": "2026-27 NorCal Premier Fall",
+    "caption": "One team, all smiles."
+  }
 }
