@@ -5,3 +5,6 @@ node_modules/
 README.md
 wrangler.jsonc
 .assetsignore
+src/
+package.json
+package-lock.json

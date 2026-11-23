@@ -1,10 +1,13 @@
 // Cloudflare Workers settings for yashmodis.com
-// The whole folder is the website; files listed in .assetsignore are kept private.
+// src/index.js checks the password before any file is served.
 {
   "name": "yashmodis-site",
+  "main": "src/index.js",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
+    "run_worker_first": true,
     "not_found_handling": "single-page-application"
   }
 }

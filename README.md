@@ -96,3 +96,10 @@ or a custom object: `{ "p": "#hero", "p2": "#nav/footer", "k": "#jersey/accent",
 ## Privacy
 
 This is a public site about a child. Don't add his school, home address, or the times and places of upcoming games.
+
+## Password lock
+
+`src/index.js` runs on Cloudflare before any file is served and shows a password page.
+Only a one-way hash of the password (`PASS_HASH`) is stored, never the password itself.
+Visitors stay signed in for 30 days; `/__logout` signs out. To change the password,
+compute `sha256(sha256(password + "|yashmodis-v1"))` and replace `PASS_HASH`.
