@@ -1,7 +1,7 @@
 // Password lock for yashmodis.com.
 // Only a one-way hash of the password is stored here, never the password itself.
 // To change the password, ask Claude to generate a new PASS_HASH.
-const PASS_HASH = "c1e4b1f6256bc005bc2a5357c60fa0c23b5445bd77218596eecba5dcbb36390f";
+const PASS_HASH = "64701875de90380fdd2bee9bc6b4a2b62dd85594396712dccb1864681b120231";
 const SALT = "|yashmodis-v1";
 const COOKIE = "ym_auth";
 const MAX_AGE = 60 * 60 * 24 * 30; // stay signed in for 30 days
