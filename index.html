@@ -69,6 +69,24 @@ a.card:hover{transform:translateY(-3px)}
 .frame{position:relative;aspect-ratio:16/9;background:#000}
 .frame iframe,.frame video{position:absolute;inset:0;width:100%;height:100%;border:0}
 .cap{padding:10px 12px 12px}.cap b{display:block;font-weight:600;line-height:1.3}.cap small{color:var(--mute);font-size:14px}
+.albums{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px}
+.album{all:unset;cursor:pointer;display:grid;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s}
+.album:hover{transform:translateY(-3px)}.album:focus-visible{outline:3px solid var(--kit)}
+.album .cov{aspect-ratio:4/3;background:var(--pitch);display:grid;place-items:center;overflow:hidden;position:relative}
+.album .cov img{width:100%;height:100%;object-fit:cover}
+.album .cov .ph{font-size:56px}
+.album .cnt{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.7);color:#fff;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+.album .info{padding:12px 14px 14px;display:grid;gap:2px}.album .info b{font-size:18px;line-height:1.25}
+.albumHead{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.albumHead p{margin:4px 0 0;color:var(--mute)}
+.best{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.best .open{border-radius:14px;overflow:hidden;aspect-ratio:1;background:#000}
+.best .open:first-child{grid-column:span 2;grid-row:span 2}
+.best img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.best .open:hover img{transform:scale(1.04)}
+.lbnav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.55);color:#fff;border:0;width:48px;height:48px;border-radius:50%;font-size:24px;cursor:pointer}
+.lbnav.prev{left:10px}.lbnav.next{right:10px}
+@media(max-width:600px){.best{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .chip{font:600 15px Barlow,sans-serif;min-height:40px;padding:0 14px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .chip[aria-pressed=true]{background:var(--pitch);color:#fff;border-color:var(--pitch)}
@@ -182,6 +200,10 @@ dialog p{padding:12px 16px;margin:0}
   <div class="head"><div><h2>Latest results</h2></div><a class="btn sm" href="#matches">All matches</a></div>
   <div id="homeMatches"></div>
  </div></div>
+ <div class="band" style="padding-top:0" id="bestBand" hidden><div class="wrap">
+  <div class="head"><div><h2>Best moments</h2><p>Mom's favorite shots.</p></div><a class="btn sm" href="#portfolio">All photo albums</a></div>
+  <div class="best" id="best"></div>
+ </div></div>
  <div class="band" style="padding-top:0"><div class="wrap">
   <div class="head"><div><h2>From the journal</h2></div><a class="btn sm" href="#journal">All posts</a></div>
   <div class="posts" id="homePosts"></div>
@@ -203,8 +225,8 @@ dialog p{padding:12px 16px;margin:0}
  <div class="stats" style="border-radius:18px;margin-bottom:28px"><div class="wrap">
   <div class="stat"><b data-s="goals">0</b><span>Goals</span></div><div class="stat"><b data-s="assists">0</b><span>Assists</span></div>
   <div class="stat"><b data-s="games">0</b><span>Games</span></div><div class="stat"><b data-s="champs">0</b><span>Titles</span></div></div></div>
- <h3 style="margin-bottom:12px">Image gallery</h3>
- <div class="filters" id="filters"></div><div class="grid" id="grid"></div>
+ <h3 style="margin-bottom:12px" id="galTitle">Photo albums</h3>
+ <div id="gallery"></div>
 </div></section>
 
 <section data-view="videos" class="band"><div class="wrap">
@@ -240,7 +262,7 @@ dialog p{padding:12px 16px;margin:0}
  <div class="actions" id="footLinks"></div>
 </div></footer>
 
-<dialog id="lb"><div class="in"><button class="btn x" type="button" id="lbX">✕ Close</button><div id="lbBody"></div></div></dialog>
+<dialog id="lb"><div class="in"><button class="btn x" type="button" id="lbX">✕ Close</button><div id="lbBody"></div><button class="lbnav prev" type="button" id="lbPrev" aria-label="Previous photo">‹</button><button class="lbnav next" type="button" id="lbNext" aria-label="Next photo">›</button></div></dialog>
 
 <script>
 {
@@ -259,7 +281,7 @@ const THEMES={
  sky:{p:'#3d8fd1',p2:'#337fbd',k:'#0e2a5c',kt:'#ffffff',kd:'#8cc8f5',a:['#1f5f99','#8cc8f5'],ki:['#0e2a5c','#8cc8f5']},
  purple:{p:'#3b1f6b',p2:'#2f185a',k:'#d4d8e0',kt:'#1b1030',kd:'#d4d8e0',a:['#5b2fa8','#c3a6ff'],ki:['#5b2fa8','#c3a6ff']},
  classic:{p:'#0f6b3a',p2:'#0b5a30',k:'#ff6a1a',kt:'#1a0a00',kd:'#ff6a1a',a:['#0f6b3a','#5fd193'],ki:['#c94a06','#ff8a45']}};
-let P={},matches=[],tours=[],photos=[],videos=[],posts=[],awards=[];
+let P={},matches=[],tours=[],photos=[],videos=[],posts=[],awards=[],albumInfo=[];let album=null,lbList=[],lbI=0;
 let f={photo:'all',video:'all',post:'all',match:'all'};
 
 function applyTheme(t){t=typeof t==='object'&&t?t:THEMES[t]||THEMES.midnight;const s=document.documentElement.style;
@@ -305,11 +327,22 @@ const chips=(list,cur,key,all)=>list.length>1||(list.length&&cur!=='all')?[`<but
 const uniq=a=>[...new Set(a.filter(Boolean))];
 function ytId(u){const m=String(u||'').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/);return m?m[1]:''}
 function renderMedia(){
- const tn=uniq(photos.map(p=>p.tournament));
- $('#filters').innerHTML=chips(tn,f.photo,'photo','All photos');
- const sp=photos.filter(p=>f.photo==='all'||p.tournament===f.photo);
- $('#grid').innerHTML=sp.length?sp.map((p,i)=>`<div class="tile"><button class="open" data-open="${photos.indexOf(p)}" aria-label="Open photo"><img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}" loading="lazy"></button>${p.caption||p.date?`<div class="cap">${p.caption?`<b>${esc(p.caption)}</b>`:''}<small>${esc([fmt(p.date),p.tournament].filter(Boolean).join(' · '))}</small></div>`:''}</div>`).join('')
-  :`<div class="empty" style="grid-column:1/-1">Photos coming soon.</div>`;
+ const albumOf=p=>p.album||p.tournament||'More photos';
+ const names=uniq(photos.map(albumOf));
+ const albums=names.map(n=>{const ps=photos.filter(p=>albumOf(p)===n),info=albumInfo.find(a=>a.name===n)||{};
+  const cover=info.cover?{src:info.cover}:ps.find(p=>p.cover)||ps.find(p=>p.featured)||ps[0];
+  return{name:n,ps,cover,date:info.date||ps.map(p=>p.date||'').sort().pop(),desc:info.description||''}}).sort(byDate);
+ if(album&&!names.includes(album))album=null;
+ const tile=(p,list)=>`<div class="tile"><button class="open" data-open="${list.indexOf(p)}" data-list="${album?'album':'all'}" aria-label="Open photo"><img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}" loading="lazy"></button>${p.caption?`<div class="cap"><b>${esc(p.caption)}</b>${p.date?`<small>${esc(fmt(p.date))}</small>`:''}</div>`:''}</div>`;
+ if(!photos.length){$('#galTitle').textContent='Photo albums';$('#gallery').innerHTML='<div class="empty">Photos coming soon.</div>'}
+ else if(album){const a=albums.find(x=>x.name===album);$('#galTitle').textContent='';
+  $('#gallery').innerHTML=`<div class="albumHead"><div><h3>${esc(a.name)}</h3><p>${esc([fmt(a.date),plural(a.ps.length,'photo'),a.desc].filter(Boolean).join(' · '))}</p></div><button class="chip" type="button" data-album="">← All albums</button></div><div class="grid">${a.ps.map(p=>tile(p,a.ps)).join('')}</div>`}
+ else{$('#galTitle').textContent='Photo albums';
+  $('#gallery').innerHTML=`<div class="albums">${albums.map(a=>`<button class="album" type="button" data-album="${esc(a.name)}"><div class="cov">${a.cover?`<img src="${esc(safe(a.cover.src))}" alt="" loading="lazy">`:`<div class="ph">⚽</div>`}<span class="cnt">${plural(a.ps.length,'photo')}</span></div><div class="info"><b>${esc(a.name)}</b><span class="meta">${esc(fmt(a.date))}</span></div></button>`).join('')}</div>`}
+ const best=photos.filter(p=>p.featured).slice(0,9);
+ $('#bestBand').hidden=!best.length;
+ $('#best').innerHTML=best.map((p,i)=>`<button class="open" type="button" data-open="${i}" data-list="best" aria-label="Open photo"><img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}" loading="lazy"></button>`).join('');
+ renderMedia.lists={all:photos,best,album:album?albums.find(x=>x.name===album).ps:[]};
  const teams=uniq(videos.map(v=>v.playlist));
  $('#vFilters').innerHTML=chips(teams,f.video,'video','All videos');
  const sv=videos.filter(v=>f.video==='all'||v.playlist===f.video);
@@ -333,7 +366,7 @@ function renderMatches(){
  $('#form').innerHTML=last.length?'Last '+last.length+': '+last.map(m=>`<span class="res ${result(m)}" title="vs ${esc(m.opponent)}">${result(m)}</span>`).join(''):'';
 }
 function renderTours(){
- $('#fix').innerHTML=tours.length?tours.map(t=>{const [y,m,d]=(t.date||'').split('-');const n=photos.filter(p=>p.tournament===t.name).length;
+ $('#fix').innerHTML=tours.length?tours.map(t=>{const [y,m,d]=(t.date||'').split('-');const n=photos.filter(p=>(p.album||p.tournament)===t.name).length;
   return `<li><div class="when"><b>${esc(+d||'')}</b><span>${esc(MON[+m-1]||'')} ${esc(y||'')}</span></div>
   <div><h3>${esc(t.name)}</h3><p>${esc([t.location,t.team,t.goals?plural(t.goals,'goal'):''].filter(Boolean).join(' · '))}</p>${t.notes?`<p>${esc(t.notes)}</p>`:''}</div>
   <div class="actions">${t.result?`<span class="medal">${/champion/i.test(t.result)?'🥇 ':/runner|2nd/i.test(t.result)?'🥈 ':/third|3rd/i.test(t.result)?'🥉 ':''}${esc(t.result)}</span>`:''}${n?`<button class="chip" type="button" data-see="${esc(t.name)}">See ${plural(n,'photo')}</button>`:''}</div></li>`}).join('')
@@ -352,16 +385,23 @@ function renderAll(){renderProfile();renderStats();renderMedia();renderMatches()
 
 document.addEventListener('click',e=>{const t=e.target;let b;
  if(b=t.closest('[data-chip]')){f[b.dataset.chip]=b.dataset.v;renderMedia();renderMatches();renderPosts();return}
- if(b=t.closest('[data-see]')){f.photo=b.dataset.see;renderMedia();location.hash='portfolio';return}
- if(b=t.closest('[data-open]')){const p=photos[+b.dataset.open];if(!p)return;
-  $('#lbBody').innerHTML=`<img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}">${p.caption||p.date?`<p><b>${esc(p.caption||'')}</b> ${esc(fmt(p.date))}</p>`:''}`;$('#lb').showModal()}
+ if(b=t.closest('[data-see]')){album=b.dataset.see;renderMedia();location.hash='portfolio';return}
+ if(b=t.closest('[data-album]')){album=b.dataset.album||null;renderMedia();$('#gallery').scrollIntoView({block:'start'});return}
+ if(b=t.closest('[data-open]')){lbList=renderMedia.lists[b.dataset.list]||photos;lbI=+b.dataset.open;showLb();$('#lb').showModal()}
 });
+function showLb(){const p=lbList[lbI];if(!p)return;
+ $('#lbBody').innerHTML=`<img src="${esc(safe(p.src))}" alt="${esc(p.caption||'Soccer photo')}"><p><b>${esc(p.caption||'')}</b> ${esc([fmt(p.date),p.album||p.tournament].filter(Boolean).join(' · '))}</p>`;
+ $('#lbPrev').hidden=$('#lbNext').hidden=lbList.length<2}
+const step=d=>{lbI=(lbI+d+lbList.length)%lbList.length;showLb()};
+$('#lbPrev').onclick=()=>step(-1);$('#lbNext').onclick=()=>step(1);
+document.addEventListener('keydown',e=>{if(!$('#lb').open)return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 $('#lbX').onclick=()=>$('#lb').close();
 $('#lb').addEventListener('click',e=>{if(e.target.id==='lb')$('#lb').close()});
 
 const load=n=>fetch('data/'+n+'.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
 route();renderAll();
-Promise.all(['profile','matches','tournaments','photos','videos','journal','awards'].map(load)).then(([pr,ma,to,ph,vi,jo,aw])=>{
+Promise.all(['profile','matches','tournaments','photos','videos','journal','awards','albums'].map(load)).then(([pr,ma,to,ph,vi,jo,aw,al])=>{
+ albumInfo=al||[];
  P=pr||{};matches=(ma||[]).sort(byDate);tours=(to||[]).sort(byDate);photos=(ph||[]).sort(byDate);videos=(vi||[]).sort(byDate);posts=(jo||[]).sort(byDate);awards=(aw||[]).sort(byDate);
  renderAll()});
 }

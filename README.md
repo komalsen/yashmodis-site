@@ -14,7 +14,8 @@ Cloudflare Pages republishes automatically in a minute or two.
 | `data/profile.json` | Name, number, position, team, about text, main photo, theme, links, live stream link |
 | `data/matches.json` | Match results |
 | `data/tournaments.json` | Tournaments and their results |
-| `data/photos.json` | Photo gallery list |
+| `data/photos.json` | Photo list (albums + Best moments) |
+| `data/albums.json` | Optional album descriptions/covers |
 | `data/videos.json` | Videos (YouTube links or files in `videos/`) |
 | `data/journal.json` | Mom's Journal posts |
 | `data/awards.json` | Awards and milestones |
@@ -55,9 +56,19 @@ Any result containing "Champion" counts as a title.
 
 **photos.json**
 ```json
-[{ "src": "photos/2026-04-12-spring-cup-01.jpg", "caption": "Lifting the trophy", "date": "2026-04-12", "tournament": "Spring Classic Cup" }]
+[{ "src": "photos/2026-11-15-vs-lions-fc/01.jpg", "caption": "Header goal", "date": "2026-11-15", "album": "vs Lions FC – Nov 15, 2026", "featured": true, "cover": true }]
 ```
-`tournament` must match a tournament `name` exactly to show up under that tournament's "See photos" button.
+- Each match/tournament is one **album** (folder `photos/<date>-<slug>/`). Albums are built from the `album` field.
+- `featured: true` puts the photo in **Best moments** on the Home page (first 9 featured, first one shown large).
+- `cover: true` makes it the album's cover (otherwise first featured, otherwise first photo).
+- If an album name matches a tournament `name`, that tournament gets a "See photos" button.
+- Hero photo on the Home page / About page is `profile.json` → `"photo"` (e.g. `photos/profile/main.jpg`).
+- Resize to max 1600px, JPG quality ~82, strip location (EXIF/GPS) data.
+
+**albums.json** (optional extra info per album)
+```json
+[{ "name": "vs Lions FC – Nov 15, 2026", "date": "2026-11-15", "description": "Won 3–1", "cover": "photos/2026-11-15-vs-lions-fc/03.jpg" }]
+```
 
 **videos.json**
 ```json
