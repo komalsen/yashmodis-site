@@ -354,7 +354,7 @@ function renderMedia(){
 }
 function matchRows(list){return `<div class="scroll"><table class="stack"><thead><tr><th>Date</th><th>Match</th><th class="r">Score</th><th class="r">Goals</th><th class="r">Assists</th><th>Notes</th></tr></thead><tbody>${list.map(m=>{const r=result(m);
  return `<tr><td class="nowrap" data-l="Date">${esc(fmt(m.date))}</td><td data-l="Match"><b>vs ${esc(m.opponent||'—')}</b><br><small class="meta">${esc([m.competition,m.team,m.home===false?'Away':m.home===true?'Home':''].filter(Boolean).join(' · '))}</small></td>
- <td class="r nowrap" data-l="Score">${r?`<span class="res ${r}">${r}</span>`:''}<span class="score">${m.us!=null&&m.us!==''?`${esc(m.us)}–${esc(m.them)}`:'TBD'}</span></td><td class="r" data-l="Goals">${r?esc(m.goals||0):''}</td><td class="r" data-l="Assists">${r?esc(m.assists||0):''}</td><td data-l="Notes">${esc(m.notes||'')}</td></tr>`}).join('')}</tbody></table></div>`}
+ <td class="r nowrap" data-l="Score">${r?`<span class="res ${r}">${r}</span>`:''}<span class="score">${m.us!=null&&m.us!==''?`${esc(m.us)}–${esc(m.them)}`:'TBD'}</span></td><td class="r" data-l="Goals">${r?(m.goals==null||m.goals===''?'—':esc(m.goals)):''}</td><td class="r" data-l="Assists">${r?(m.assists==null||m.assists===''?'—':esc(m.assists)):''}</td><td data-l="Notes">${esc(m.notes||'')}${m.album?`${m.notes?'<br>':''}<button class="chip" type="button" data-see="${esc(m.album)}" style="margin-top:4px">📷 See photos</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
 function renderMatches(){
  const comps=uniq(matches.map(m=>m.competition));
  $('#mFilters').innerHTML=chips(comps,f.match,'match','All matches');
